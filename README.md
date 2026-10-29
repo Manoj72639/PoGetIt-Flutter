@@ -99,7 +99,7 @@ lib/
 Clone the repository:
 
 ```bash
-git clone https://github.com/YOUR_USERNAME/PoGetIt-Flutter.git
+git clone https://github.com/Manoj72639/PoGetIt-Flutter
 cd PoGetIt-Flutter
 ```
 
