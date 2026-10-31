@@ -14,6 +14,7 @@ import 'day3_photography_screen.dart';
 import 'day3_reset_screen.dart';
 import 'home_screen.dart';
 import 'all_quests_screen.dart';
+import 'health_screen.dart';
 
 class RecommendedQuestsScreen extends StatefulWidget {
   final QuestProfile profile;
@@ -128,6 +129,16 @@ class _RecommendedQuestsScreenState extends State<RecommendedQuestsScreen> {
             icon: const Icon(Icons.refresh),
             onPressed: () {
               setState(_refresh);
+            },
+          ),
+          IconButton(
+            tooltip: 'Health Connect',
+            icon: const Icon(Icons.favorite_outline),
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute<void>(builder: (_) => const HealthScreen()),
+              );
             },
           ),
         ],
