@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "820733997839",
+    "project_id": "pogetitquests",
+    "storage_bucket": "pogetitquests.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:820733997839:android:bfa7ad16c7fdea5e29c47a",
+        "android_client_info": {
+          "package_name": "com.example.pogetit_quests"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyANTYDtnHKkVy-V4wT6-a-ZbzaaD99Dxws"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

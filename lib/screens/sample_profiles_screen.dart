@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:pogetit_quests/screens/home_screen.dart';
 
 import '../data/sample_quest_profiles.dart';
-import 'recommended_quests_screen.dart';
 
 class SampleProfilesScreen extends StatelessWidget {
   const SampleProfilesScreen({super.key});
@@ -33,9 +33,7 @@ class SampleProfilesScreen extends StatelessWidget {
               onTap: () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute<void>(
-                    builder: (_) => RecommendedQuestsScreen(profile: profile),
-                  ),
+                  MaterialPageRoute<void>(builder: (_) => HomeScreen()),
                 );
               },
             ),
