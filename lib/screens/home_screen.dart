@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../services/profile_service.dart';
 import '../widgets/current_location_header.dart';
 
+import 'recommended_quests_screen.dart';
 import 'profile_screen.dart';
 
 class HomeScreen extends StatelessWidget {
@@ -114,6 +115,53 @@ class HomeScreen extends StatelessWidget {
                       ),
 
                       const SizedBox(height: 12),
+
+                      Card(
+                        margin: EdgeInsets.zero,
+                        child: Padding(
+                          padding: const EdgeInsets.all(12),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              const Text(
+                                'Recommended Quests',
+                                style: TextStyle(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                              const SizedBox(height: 6),
+                              const Text(
+                                'Quests matched to your '
+                                'interests and preferences.',
+                                style: TextStyle(fontSize: 13),
+                              ),
+                              const SizedBox(height: 10),
+                              SizedBox(
+                                width: double.infinity,
+                                child: ElevatedButton(
+                                  onPressed: () {
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute<void>(
+                                        builder: (_) =>
+                                            const RecommendedQuestsScreen(),
+                                      ),
+                                    );
+                                  },
+                                  child: const Text(
+                                    'View Recommended Quests',
+                                    textAlign: TextAlign.center,
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+
+                      const SizedBox(height: 10),
+
                       SizedBox(
                         width: double.infinity,
                         child: OutlinedButton.icon(
