@@ -5,14 +5,14 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 
 import 'firebase_options.dart';
 
-import 'screens/home_screen.dart';
 import 'screens/welcome_screen.dart';
 import 'screens/master_quest_list_screen.dart';
+import 'screens/pogetit_dashboard_screen.dart';
+import 'theme/pogetit_theme.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  // Initialize Firebase.
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
 
   runApp(const PoGetItApp());
@@ -27,15 +27,14 @@ class PoGetItApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       title: 'PoGetIt',
 
-      theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.teal),
-        useMaterial3: true,
-      ),
+      // Black and white theme.
+      theme: PoGetItTheme.light,
+      themeMode: ThemeMode.light,
 
-      // Named route for the Day 2 Master Quest Library.
+      // Preserve the existing Master Quest Library route.
       routes: {'/master-quests': (context) => const MasterQuestListScreen()},
 
-      // Keep Firebase Authentication as the entry point.
+      // Firebase Authentication remains the entry point.
       home: const AuthGate(),
     );
   }
@@ -49,39 +48,26 @@ class AuthGate extends StatelessWidget {
     return StreamBuilder<User?>(
       stream: FirebaseAuth.instance.authStateChanges(),
       builder: (context, authSnapshot) {
-        // Handle authentication errors.
         if (authSnapshot.hasError) {
-          return Scaffold(
-            appBar: AppBar(title: const Text('Authentication Error')),
-            body: Center(
-              child: Padding(
-                padding: const EdgeInsets.all(20),
-                child: Text(
-                  'Authentication error: '
-                  '${authSnapshot.error}',
-                  textAlign: TextAlign.center,
-                ),
-              ),
-            ),
+          return _ErrorScreen(
+            title: 'Authentication Error',
+            message: 'Authentication error: ${authSnapshot.error}',
           );
         }
 
-        // Wait for Firebase Authentication.
         if (authSnapshot.connectionState == ConnectionState.waiting) {
-          return const Scaffold(
-            body: Center(child: CircularProgressIndicator()),
-          );
+          return const _LoadingScreen();
         }
 
         final user = authSnapshot.data;
 
-        // User is not signed in.
+        // User has not signed in.
         if (user == null) {
           return const WelcomeScreen();
         }
 
-        // User is signed in.
-        // Load the Firestore profile for this user.
+        // User is authenticated.
+        // Check onboarding completion in Firestore.
         return StreamBuilder<DocumentSnapshot<Map<String, dynamic>>>(
           key: ValueKey(user.uid),
           stream: FirebaseFirestore.instance
@@ -89,45 +75,63 @@ class AuthGate extends StatelessWidget {
               .doc(user.uid)
               .snapshots(),
           builder: (context, profileSnapshot) {
-            // Handle Firestore errors.
             if (profileSnapshot.hasError) {
-              return Scaffold(
-                appBar: AppBar(title: const Text('Profile Error')),
-                body: Center(
-                  child: Padding(
-                    padding: const EdgeInsets.all(20),
-                    child: Text(
-                      'Unable to load profile: '
-                      '${profileSnapshot.error}',
-                      textAlign: TextAlign.center,
-                    ),
-                  ),
-                ),
+              return _ErrorScreen(
+                title: 'Profile Error',
+                message:
+                    'Unable to load profile: '
+                    '${profileSnapshot.error}',
               );
             }
 
-            // Wait for the Firestore profile.
             if (profileSnapshot.connectionState == ConnectionState.waiting ||
                 !profileSnapshot.hasData) {
-              return const Scaffold(
-                body: Center(child: CircularProgressIndicator()),
-              );
+              return const _LoadingScreen();
             }
 
             final data = profileSnapshot.data!.data();
 
             final onboardingCompleted = data?['onboardingCompleted'] == true;
 
-            // Existing user with completed onboarding.
             if (onboardingCompleted) {
-              return const HomeScreen();
+              // New dashboard:
+              // Today | Explore | Journey | Profile
+              return const PoGetItDashboardScreen();
             }
 
-            // Signed in but onboarding is incomplete.
             return const OnboardingRequiredScreen();
           },
         );
       },
+    );
+  }
+}
+
+class _LoadingScreen extends StatelessWidget {
+  const _LoadingScreen();
+
+  @override
+  Widget build(BuildContext context) {
+    return const Scaffold(body: Center(child: CircularProgressIndicator()));
+  }
+}
+
+class _ErrorScreen extends StatelessWidget {
+  const _ErrorScreen({required this.title, required this.message});
+
+  final String title;
+  final String message;
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: Text(title)),
+      body: Center(
+        child: Padding(
+          padding: const EdgeInsets.all(20),
+          child: Text(message, textAlign: TextAlign.center),
+        ),
+      ),
     );
   }
 }
@@ -148,26 +152,20 @@ class OnboardingRequiredScreen extends StatelessWidget {
               const Icon(
                 Icons.assignment_outlined,
                 size: 56,
-                color: Colors.teal,
+                color: Colors.black,
               ),
-
               const SizedBox(height: 16),
-
               const Text(
                 'Onboarding Required',
                 style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
               ),
-
               const SizedBox(height: 12),
-
               const Text(
                 'Your account is signed in, '
                 'but onboarding is not complete.',
                 textAlign: TextAlign.center,
               ),
-
               const SizedBox(height: 24),
-
               FilledButton.icon(
                 onPressed: () async {
                   await FirebaseAuth.instance.signOut();

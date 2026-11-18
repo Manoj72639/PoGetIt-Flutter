@@ -168,12 +168,6 @@ class QuestRecommendationService {
         return false;
       }
 
-      // Do not recommend rejected or retired quests.
-      if (quest.approvalStatus == QuestApprovalStatus.rejected ||
-          quest.approvalStatus == QuestApprovalStatus.retired) {
-        return false;
-      }
-
       return true;
     }).toList();
 
